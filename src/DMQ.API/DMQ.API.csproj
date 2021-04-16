@@ -8,5 +8,10 @@
     <PackageReference Include="MassTransit.AspNetCore" Version="7.1.8" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DMQ.MessageComponents\DMQ.MessageComponents.csproj" />
+    <ProjectReference Include="..\DMQ.MessageContracts\DMQ.MessageContracts.csproj" />
+  </ItemGroup>
+
 
 </Project>
