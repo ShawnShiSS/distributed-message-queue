@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMQ.MessageContracts", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMQ.API", "src\DMQ.API\DMQ.API.csproj", "{2356FF87-372A-4C45-BB64-CFC7F11FB123}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMQ.MessageComponents", "src\DMQ.MessageComponents\DMQ.MessageComponents.csproj", "{A5FC994B-A7C0-4C8A-8E37-6D83EE5000D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2356FF87-372A-4C45-BB64-CFC7F11FB123}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2356FF87-372A-4C45-BB64-CFC7F11FB123}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2356FF87-372A-4C45-BB64-CFC7F11FB123}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5FC994B-A7C0-4C8A-8E37-6D83EE5000D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5FC994B-A7C0-4C8A-8E37-6D83EE5000D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5FC994B-A7C0-4C8A-8E37-6D83EE5000D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5FC994B-A7C0-4C8A-8E37-6D83EE5000D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
