@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31105.61
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "src\API\API.csproj", "{38616F64-F9EC-4EDF-BE41-1351CA3224D5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMQ.MessageContracts", "src\DMQ.MessageContracts\DMQ.MessageContracts.csproj", "{6028E6C7-BEE5-470C-8AFF-F6CE871C9A0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMQ.API", "src\DMQ.API\DMQ.API.csproj", "{2356FF87-372A-4C45-BB64-CFC7F11FB123}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{38616F64-F9EC-4EDF-BE41-1351CA3224D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{38616F64-F9EC-4EDF-BE41-1351CA3224D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{38616F64-F9EC-4EDF-BE41-1351CA3224D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{38616F64-F9EC-4EDF-BE41-1351CA3224D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6028E6C7-BEE5-470C-8AFF-F6CE871C9A0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6028E6C7-BEE5-470C-8AFF-F6CE871C9A0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6028E6C7-BEE5-470C-8AFF-F6CE871C9A0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6028E6C7-BEE5-470C-8AFF-F6CE871C9A0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2356FF87-372A-4C45-BB64-CFC7F11FB123}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2356FF87-372A-4C45-BB64-CFC7F11FB123}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2356FF87-372A-4C45-BB64-CFC7F11FB123}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2356FF87-372A-4C45-BB64-CFC7F11FB123}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
