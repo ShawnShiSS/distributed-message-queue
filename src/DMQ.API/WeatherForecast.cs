@@ -1,6 +1,6 @@
 using System;
 
-namespace API
+namespace DMQ.API
 {
     public class WeatherForecast
     {
