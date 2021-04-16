@@ -3,16 +3,9 @@ using DMQ.MessageContracts;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DMQ.API
 {
@@ -32,7 +25,11 @@ namespace DMQ.API
             services.AddMassTransit(config => {
                 config.AddConsumer<SubmitOrderConsumer>();
 
+                // Add in-memory message broker for testing purpose using MediatR
+                config.AddMediator();
+
                 config.AddRequestClient<ISubmitOrder>();
+
             });
             services.AddControllers();
         }
