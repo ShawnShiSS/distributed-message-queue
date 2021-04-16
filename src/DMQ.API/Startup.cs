@@ -1,4 +1,5 @@
 using DMQ.MessageComponents.Consumers;
+using DMQ.MessageContracts;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,6 +31,8 @@ namespace DMQ.API
             // Setup container configuration for MT. E.g., consumers, sagas, etc.. 
             services.AddMassTransit(config => {
                 config.AddConsumer<SubmitOrderConsumer>();
+
+                config.AddRequestClient<ISubmitOrder>();
             });
             services.AddControllers();
         }

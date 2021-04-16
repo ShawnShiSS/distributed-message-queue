@@ -6,9 +6,14 @@ namespace DMQ.MessageComponents.Consumers
 {
     public class SubmitOrderConsumer : IConsumer<ISubmitOrder>
     {
-        public Task Consume(ConsumeContext<ISubmitOrder> context)
+        public async Task Consume(ConsumeContext<ISubmitOrder> context)
         {
-            throw new System.NotImplementedException();
+            await context.RespondAsync<IOrderSubmissionAccepted>(new
+            {
+                OrderId = context.Message.OrderId,
+                Timestamp = InVar.Timestamp,
+                CustomerNumber = context.Message.CustomerNumber
+            });
         }
     }
 }
