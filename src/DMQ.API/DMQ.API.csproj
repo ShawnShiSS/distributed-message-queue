@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MassTransit.Analyzers" Version="7.1.8" />
-    <PackageReference Include="MassTransit.AspNetCore" Version="7.1.8" />
+    <PackageReference Include="MassTransit.Analyzers" Version="6.3.2" />
+    <PackageReference Include="MassTransit.AspNetCore" Version="6.3.2" />
   </ItemGroup>
 
   <ItemGroup>
