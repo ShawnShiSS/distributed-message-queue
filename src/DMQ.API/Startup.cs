@@ -25,13 +25,21 @@ namespace DMQ.API
             services.AddMassTransit(config => {
                 config.AddConsumer<SubmitOrderConsumer>();
 
-                // Add in-memory message broker for testing purpose using MediatR
+                // Add in-memory message transport for testing purpose using MediatR, without a message broker.
                 config.AddMediator();
 
                 config.AddRequestClient<ISubmitOrder>();
 
             });
+
+            // MVC controllers
             services.AddControllers();
+
+            // Swagger 
+            services.AddOpenApiDocument(cfg => 
+            {
+                cfg.PostProcess = d => d.Info.Title = "Distributed Message Queue System - API";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +51,10 @@ namespace DMQ.API
             }
 
             app.UseHttpsRedirection();
+
+            // Swagger UI
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
 
             app.UseRouting();
 
