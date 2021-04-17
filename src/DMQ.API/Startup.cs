@@ -26,7 +26,8 @@ namespace DMQ.API
             services.AddMassTransit(config => {
                 config.AddConsumer<SubmitOrderConsumer>();
 
-                // Add in-memory messages for testing purpose using MediatR, without using a message transport.
+                // Add in-memory message dispatching for testing purpose using MediatR, without using a message transport.
+                // This allows us to test messaging system, and get ready to break out the consumers into a separate process and head towards a distributed system.
                 config.AddMediator();
 
                 config.AddRequestClient<ISubmitOrder>();
