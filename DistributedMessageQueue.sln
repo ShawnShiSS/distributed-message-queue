@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31105.61
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMQ.MessageContracts", "src\DMQ.MessageContracts\DMQ.MessageContracts.csproj", "{6028E6C7-BEE5-470C-8AFF-F6CE871C9A0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DMQ.MessageContracts", "src\DMQ.MessageContracts\DMQ.MessageContracts.csproj", "{6028E6C7-BEE5-470C-8AFF-F6CE871C9A0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMQ.API", "src\DMQ.API\DMQ.API.csproj", "{2356FF87-372A-4C45-BB64-CFC7F11FB123}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DMQ.API", "src\DMQ.API\DMQ.API.csproj", "{2356FF87-372A-4C45-BB64-CFC7F11FB123}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMQ.MessageComponents", "src\DMQ.MessageComponents\DMQ.MessageComponents.csproj", "{A5FC994B-A7C0-4C8A-8E37-6D83EE5000D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DMQ.MessageComponents", "src\DMQ.MessageComponents\DMQ.MessageComponents.csproj", "{A5FC994B-A7C0-4C8A-8E37-6D83EE5000D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMQ.MessageServices", "src\DMQ.MessageServices\DMQ.MessageServices.csproj", "{135BB94F-9271-432A-9792-0CE25C8C313D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{A5FC994B-A7C0-4C8A-8E37-6D83EE5000D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5FC994B-A7C0-4C8A-8E37-6D83EE5000D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5FC994B-A7C0-4C8A-8E37-6D83EE5000D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{135BB94F-9271-432A-9792-0CE25C8C313D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{135BB94F-9271-432A-9792-0CE25C8C313D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{135BB94F-9271-432A-9792-0CE25C8C313D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{135BB94F-9271-432A-9792-0CE25C8C313D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
