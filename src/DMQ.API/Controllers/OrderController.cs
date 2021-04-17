@@ -1,5 +1,6 @@
 ﻿using DMQ.MessageContracts;
 using MassTransit;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -25,16 +26,24 @@ namespace DMQ.API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Post(Guid id, string customerNumber)
         {
-            var response = await _submitOrderRequestClient.GetResponse<IOrderSubmissionAccepted>(new
+            // Tuple response
+            var (accepted, rejected) = await _submitOrderRequestClient.GetResponse<IOrderSubmissionAccepted, IOrderSubmissionRejected>(new
             {
                 OrderId = id,
                 Timestamp = InVar.Timestamp,
                 CustomerNumber = customerNumber
             });
 
-            return Ok(response.Message);
+            if (accepted.IsCompletedSuccessfully)
+            {
+                return Accepted(await accepted);
+            }
+
+            return BadRequest(await rejected);
         }
     }
 }

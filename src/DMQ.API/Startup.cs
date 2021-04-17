@@ -21,11 +21,12 @@ namespace DMQ.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Message queue using Mass Transit
             // Setup container configuration for MT. E.g., consumers, sagas, etc.. 
             services.AddMassTransit(config => {
                 config.AddConsumer<SubmitOrderConsumer>();
 
-                // Add in-memory message transport for testing purpose using MediatR, without a message broker.
+                // Add in-memory messages for testing purpose using MediatR, without using a message transport.
                 config.AddMediator();
 
                 config.AddRequestClient<ISubmitOrder>();
