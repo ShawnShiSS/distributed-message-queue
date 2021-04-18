@@ -1,6 +1,7 @@
 using DMQ.MessageComponents.Consumers;
 using DMQ.MessageContracts;
 using MassTransit;
+using MassTransit.Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -26,9 +27,14 @@ namespace DMQ.API
             services.AddMassTransit(config => {
                 config.AddConsumer<SubmitOrderConsumer>();
 
+                // Option 1 - in-memory
                 // Add in-memory message dispatching for testing purpose using MediatR, without using a message transport.
                 // This allows us to test messaging system, and get ready to break out the consumers into a separate process and head towards a distributed system.
-                config.AddMediator();
+                //config.AddMediator();
+
+                // Option 2 - RabbitMQ
+                // By default, this will use localhost, guest, guest.
+                config.AddBus(provider => Bus.Factory.CreateUsingRabbitMq());
 
                 config.AddRequestClient<ISubmitOrder>();
 
