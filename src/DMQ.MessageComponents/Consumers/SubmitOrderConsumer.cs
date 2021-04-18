@@ -22,6 +22,13 @@ namespace DMQ.MessageComponents.Consumers
         {
             _logger.LogInformation($"SubmitOrderConsumer for customer number: {context.Message.CustomerNumber}");
 
+            // Only respond if a response is expected
+            if (context.ResponseAddress == null)
+            {
+                return;
+            }
+
+            // Generate response
             if (!IsValidOrder(context.Message.CustomerNumber))
             {
                 await context.RespondAsync<IOrderSubmissionRejected>(new 
