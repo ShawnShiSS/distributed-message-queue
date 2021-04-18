@@ -11,3 +11,7 @@ Consumers using the generic host provided by ASP.NET Core.
 Here is an example of how binding works in RabbitMQ:
 
 Message contract (ISubmitOrder) --> Exchange (ISubmitOrder) --> Exchange (submit-order) --> Queue (submit-order) --> Consumer (dynamic name per instance)
+
+# Competing Consumers
+It is possible to start multiple instances of this consumer, and the multiple instances shall all consume the messages in the queue. 
+RabbitMQ will handle the load balancing and distribute messages to connected services. Nice!
