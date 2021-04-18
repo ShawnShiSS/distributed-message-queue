@@ -9,7 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DMQ.API", "src\DMQ.API\DMQ.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DMQ.MessageComponents", "src\DMQ.MessageComponents\DMQ.MessageComponents.csproj", "{A5FC994B-A7C0-4C8A-8E37-6D83EE5000D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMQ.MessageServices", "src\DMQ.MessageServices\DMQ.MessageServices.csproj", "{135BB94F-9271-432A-9792-0CE25C8C313D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DMQ.MessageServices", "src\DMQ.MessageServices\DMQ.MessageServices.csproj", "{135BB94F-9271-432A-9792-0CE25C8C313D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{43AEA821-1970-43FC-B73C-D697517E1C83}"
+	ProjectSection(SolutionItems) = preProject
+		Solution Items\docker-compose.yml = Solution Items\docker-compose.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
