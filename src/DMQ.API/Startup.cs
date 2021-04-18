@@ -1,11 +1,13 @@
 using DMQ.MessageComponents.Consumers;
 using DMQ.MessageContracts;
 using MassTransit;
+using MassTransit.Definition;
 using MassTransit.Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 namespace DMQ.API
@@ -22,6 +24,9 @@ namespace DMQ.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Optional, only required if we are hosting any message endpoint here.
+            services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
+
             // Message queue using Mass Transit
             // Setup container configuration for MT. E.g., consumers, sagas, etc.. 
             services.AddMassTransit(config => {
@@ -39,6 +44,10 @@ namespace DMQ.API
                 config.AddRequestClient<ISubmitOrder>();
 
             });
+            // With the bus, we have to add the hosted service, so we can get the bus control to start and stop.
+            // Similar to how it would be done in the DMQ.MessageServices.MassTransitConsoleHostedService.cs in the Console App.
+            // This will add the host to the ASP.NET Core runtime.
+            services.AddMassTransitHostedService();
 
             // MVC controllers
             services.AddControllers();
