@@ -22,6 +22,15 @@ namespace DMQ.MessageComponents.Consumers
         {
             _logger.LogInformation($"SubmitOrderConsumer for customer number: {context.Message.CustomerNumber}");
 
+            // Got the submit order message, let's acknowledge it by publishing an event.
+            await context.Publish<IOrderSubmitted>(new
+            {
+
+                OrderId = context.Message.OrderId,
+                Timestamp = InVar.Timestamp,
+                CustomerNumber = context.Message.CustomerNumber
+            });
+
             // Only respond if a response is expected
             if (context.ResponseAddress == null)
             {
