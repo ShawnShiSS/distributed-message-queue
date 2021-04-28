@@ -1,6 +1,6 @@
 ﻿using Automatonymous;
 using DMQ.MessageContracts;
-using MassTransit.RedisIntegration;
+using MassTransit.Saga;
 using System;
 
 namespace DMQ.MessageComponents.StateMachines
@@ -37,7 +37,7 @@ namespace DMQ.MessageComponents.StateMachines
 
     public class OrderState : 
         SagaStateMachineInstance,
-        IVersionedSaga 
+        ISagaVersion 
     {
         /// <summary>
         ///     Unique identifier to identify the saga instance.
