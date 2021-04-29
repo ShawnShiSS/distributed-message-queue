@@ -7,4 +7,4 @@ A distributed message queue system that handle messages asynchronously.
 # Documentation
 [Distributed Messaging System — Setup Consumers and RabbitMQ with Docker in ASP.NET Core](https://shawn-shi.medium.com/distributed-messaging-system-setup-consumers-and-rabbitmq-with-docker-in-asp-net-core-6133ce666268)
 
-# Please watch for upcoming updates.
+## This project is work in progress. Please watch for upcoming updates.
