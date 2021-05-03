@@ -13,6 +13,10 @@ namespace DMQ.MessageComponents.Consumers
     {
         private readonly ILogger<SubmitOrderConsumer> _logger;
 
+        public SubmitOrderConsumer()
+        {
+        }
+
         public SubmitOrderConsumer(ILogger<SubmitOrderConsumer> logger)
         {
             _logger = logger;
@@ -20,7 +24,7 @@ namespace DMQ.MessageComponents.Consumers
 
         public async Task Consume(ConsumeContext<ISubmitOrder> context)
         {
-            _logger.LogInformation($@"SubmitOrderConsumer is consuming order {context.Message.OrderId}
+            _logger?.LogInformation($@"SubmitOrderConsumer is consuming order {context.Message.OrderId}
                                       for customer : {context.Message.CustomerNumber}");
 
             // Got the submit order message, let's acknowledge it by publishing an event.
