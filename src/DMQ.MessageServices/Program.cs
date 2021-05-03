@@ -36,22 +36,22 @@ namespace DMQ.MessageServices
                 })
                 .ConfigureServices((hostingContext, services) => 
                 {
-                    // Use snake-like-names for queues
+                    // Use snake-like-names for queues.
+                    // E.g., queue for SubmitOrder messages would be named "submit-order"
                     services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
                     services.AddMassTransit(cfg => 
                     {
                         // Allow Mass Transit to scan all the types instead of manually adding them all
                         cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
 
-
+                        // Add RabbitMQ as the message broker
+                        cfg.UsingRabbitMq(ConfigureBus);
 
                         // Add Saga State Machines
                         const string redisConfigurationString = "127.0.0.1";
                         cfg.AddSagaStateMachine<OrderStateMachine, OrderState>()
                            // Redis repository to store state instances. By default, redis runs on localhost.
                            .RedisRepository(redisConfigurationString);
-
-                        cfg.UsingRabbitMq(ConfigureBus);
                     });
 
                     // This will also configure the message queue endpoints.

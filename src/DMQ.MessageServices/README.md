@@ -15,3 +15,7 @@ Message contract (ISubmitOrder) --> Exchange (ISubmitOrder) --> Exchange (submit
 # Competing Consumers
 It is possible to start multiple instances of this consumer, and the multiple instances shall all consume the messages in the queue. 
 RabbitMQ will handle the load balancing and distribute messages to connected services. Nice!
+
+# Message timeout
+1. Command type messages that create/update orders should not timeout, since they contain sensitive information.
+1. Query type messages that retrieve order state can timeout, since it won't hurt...
