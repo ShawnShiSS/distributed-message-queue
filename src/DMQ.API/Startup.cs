@@ -41,7 +41,10 @@ namespace DMQ.API
                 // By default, this will use localhost, guest, guest.
                 config.AddBus(provider => Bus.Factory.CreateUsingRabbitMq());
 
+                // Pubish submit order message, instead of sending it to a specific queue directly.
                 config.AddRequestClient<ISubmitOrder>();
+                // Pubish check order message
+                config.AddRequestClient<ICheckOrder>();
 
             });
             // With the bus, we have to add the hosted service, so we can get the bus control to start and stop.

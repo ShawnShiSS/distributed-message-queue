@@ -17,6 +17,7 @@ namespace DMQ.API.Controllers
        
         private readonly ILogger<OrderController> _logger;
         private readonly IRequestClient<ISubmitOrder> _submitOrderRequestClient;
+        private readonly IRequestClient<ICheckOrder> _checkOrderRequestClient;
         /// <summary>
         ///     Send endpoint provider, which is part of the Mass Transit IBus interface, which manages send/publish endpoints.
         ///     Startup.cs/AddMassTransit() registers all the endpoints, and the consumers will resolve them.
@@ -25,11 +26,32 @@ namespace DMQ.API.Controllers
 
         public OrderController(ILogger<OrderController> logger,
                                IRequestClient<ISubmitOrder> submitOrderRequestClient,
+                               IRequestClient<ICheckOrder> checkOrderRequestClient,
                                ISendEndpointProvider sendEndpointProvider)
         {
             _logger = logger;
             _submitOrderRequestClient = submitOrderRequestClient;
+            _checkOrderRequestClient = checkOrderRequestClient;
             _sendEndpointProvider = sendEndpointProvider;
+        }
+
+        // Database for the order state is owned by another micro-service, so the API can not just talks to the database directly.
+        [HttpGet]
+        public async Task<IActionResult> GetOrderStatus(Guid id)
+        {
+            var (status, notFound) = await _checkOrderRequestClient.GetResponse<IOrderStatus, IOrderNotFound>(new
+            {
+                OrderId = id
+            });
+
+            if (status.IsCompletedSuccessfully)
+            {
+                var response = await status;
+                return Ok(response.Message);
+            }
+
+            var notFoundResponse = await notFound;
+            return NotFound(notFoundResponse.Message);
         }
 
         // Publish a message without specifying a queue.
@@ -54,7 +76,7 @@ namespace DMQ.API.Controllers
             return BadRequest(await rejected);
         }
 
-        // Send a message directly to a queue
+        // Send a message directly to a queue, kind of cheating.
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
