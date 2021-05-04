@@ -11,8 +11,9 @@ namespace DMQ.MessageComponents.StateMachines
     {
         public OrderStateMachineDefinition()
         {
-            // Proccess 5 messages concurrently at max at one time.
-            ConcurrentMessageLimit = 5;
+            // Proccess 8 messages concurrently at max at one time.
+            // Multiple instances would only pre-load 8 messages.
+            ConcurrentMessageLimit = 8;
         }
 
         protected override void ConfigureSaga(IReceiveEndpointConfigurator endpointConfigurator, ISagaConfigurator<OrderState> sagaConfigurator)
