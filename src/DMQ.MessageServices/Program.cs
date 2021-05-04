@@ -49,7 +49,8 @@ namespace DMQ.MessageServices
 
                         // Add Saga State Machines
                         const string redisConfigurationString = "127.0.0.1";
-                        cfg.AddSagaStateMachine<OrderStateMachine, OrderState>()
+                        // Passing a definition allows us to configure 
+                        cfg.AddSagaStateMachine<OrderStateMachine, OrderState>(typeof(OrderStateMachineDefinition))
                            // Redis repository to store state instances. By default, redis runs on localhost.
                            .RedisRepository(redisConfigurationString);
                     });
