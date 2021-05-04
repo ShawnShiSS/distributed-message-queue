@@ -12,6 +12,10 @@ namespace DMQ.MessageContracts
         /// </summary>
         Guid OrderId { get; }
         DateTime Timestamp { get; }
+
+        /// <summary>
+        ///     Business identifier Customer Number
+        /// </summary>
         string CustomerNumber { get; }
     }
 }
