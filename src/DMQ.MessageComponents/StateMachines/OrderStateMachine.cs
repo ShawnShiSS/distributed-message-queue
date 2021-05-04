@@ -30,6 +30,10 @@ namespace DMQ.MessageComponents.StateMachines
                 }));
             });
 
+            // Account closed event does not have an order id,
+            // so we have to correlate the saga instance by the customer number.
+            Event(() => AccountClosed, x => x.CorrelateBy((saga, context) => saga.CustomerNumber == context.Message.CustomerNumber));
+
             InstanceState(x => x.CurrentState);
 
             // All state machines start in the initial state
@@ -71,8 +75,11 @@ namespace DMQ.MessageComponents.StateMachines
 
             During(Submitted,
                 // If the same order id gets submitted twice, the second request will fail with "Not accepted in state Submitted".
-                Ignore(OrderSubmitted)
+                Ignore(OrderSubmitted),
+                When(AccountClosed)
+                    .TransitionTo(Canceled)
             );
+
 
             // Final state is specical, as state machines in final state will be removed
         }
@@ -83,6 +90,11 @@ namespace DMQ.MessageComponents.StateMachines
         public State Submitted { get; private set; }
 
         /// <summary>
+        ///     Canceled state.
+        /// </summary>
+        public State Canceled { get; private set; }
+
+        /// <summary>
         ///     On order submitted event.
         /// </summary>
         public Event<IOrderSubmitted> OrderSubmitted { get; private set; }
@@ -91,5 +103,10 @@ namespace DMQ.MessageComponents.StateMachines
         ///     On check order status event.
         /// </summary>
         public Event<ICheckOrder> CheckOrderStatus { get; private set; }
+
+        /// <summary>
+        ///     On account closed event, we may want to do things like cancel an order.
+        /// </summary>
+        public Event<ICustomerAccountClosed> AccountClosed { get; private set; }
     }
 }
