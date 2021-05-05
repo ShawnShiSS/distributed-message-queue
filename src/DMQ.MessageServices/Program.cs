@@ -52,10 +52,16 @@ namespace DMQ.MessageServices
                         // Passing a definition allows us to configure 
                         cfg.AddSagaStateMachine<OrderStateMachine, OrderState>(typeof(OrderStateMachineDefinition))
                            // Redis repository to store state instances. By default, redis runs on localhost.
-                           .RedisRepository(r => 
+                           //.RedisRepository(r => 
+                           //{
+                           //    r.ConcurrencyMode = MassTransit.RedisIntegration.ConcurrencyMode.Optimistic;
+                           //    r.DatabaseConfiguration(redisConfigurationString);
+                           //})
+                           // MongoDB repository to store state instances and support querying.
+                           .MongoDbRepository(r =>
                            {
-                               r.ConcurrencyMode = MassTransit.RedisIntegration.ConcurrencyMode.Optimistic;
-                               r.DatabaseConfiguration(redisConfigurationString);
+                               r.Connection = "mongodb://127.0.0.1";
+                               r.DatabaseName = "orders";
                            });
                     });
 
