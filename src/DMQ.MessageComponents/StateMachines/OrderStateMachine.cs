@@ -1,4 +1,5 @@
 ﻿using Automatonymous;
+using DMQ.MessageComponents.StateMachines.OrderStateMachineActivities;
 using DMQ.MessageContracts;
 using MassTransit;
 using System;
@@ -13,6 +14,8 @@ namespace DMQ.MessageComponents.StateMachines
             // E.g., OrderId in the OrderSubmitted event will be used to correlate the event to a saga instance. If the instance does not exist, it will get created.
             // If Redis is used as the state machine repository, redis-cli allows us to check an order state by "get orderId"
             Event(() => OrderSubmitted, x => x.CorrelateById(m => m.Message.OrderId));
+            Event(() => OrderAccepted, x => x.CorrelateById(m => m.Message.OrderId));
+
             Event(() => CheckOrderStatus, x =>
             {
                 x.CorrelateById(m => m.Message.OrderId);
@@ -30,8 +33,11 @@ namespace DMQ.MessageComponents.StateMachines
                 }));
             });
 
+            // Example of event correlation without the actual CorrelationId.
             // Account closed event does not have an order id,
             // so we have to correlate the saga instance by the customer number.
+            // Customer number has to be queried out to the saga repo to perform a search.
+            // Note: Redis not not support queries that search by properties, which are required to look up saga instances by properties like customer number other than Saga Correlation Id.
             Event(() => AccountClosed, x => x.CorrelateBy((saga, context) => saga.CustomerNumber == context.Message.CustomerNumber));
 
             InstanceState(x => x.CurrentState);
@@ -60,7 +66,10 @@ namespace DMQ.MessageComponents.StateMachines
                         context.Instance.CustomerNumber = context.Data.CustomerNumber;
                         context.Instance.SubmittedDate = context.Data.Timestamp;
 
-                    })
+                    }),
+                When(OrderAccepted)
+                    .Activity(x => x.OfType<AcceptOrderActivity>())
+                    .TransitionTo(Accepted)
             );
 
             // Handle check order status requests.
@@ -90,6 +99,11 @@ namespace DMQ.MessageComponents.StateMachines
         public State Submitted { get; private set; }
 
         /// <summary>
+        ///     Accepted state.
+        /// </summary>
+        public State Accepted { get; private set; }
+
+        /// <summary>
         ///     Canceled state.
         /// </summary>
         public State Canceled { get; private set; }
@@ -98,6 +112,11 @@ namespace DMQ.MessageComponents.StateMachines
         ///     On order submitted event.
         /// </summary>
         public Event<IOrderSubmitted> OrderSubmitted { get; private set; }
+
+        /// <summary>
+        ///     On order accepted event.
+        /// </summary>
+        public Event<IOrderAccepted> OrderAccepted { get; private set; }
 
         /// <summary>
         ///     On check order status event.
