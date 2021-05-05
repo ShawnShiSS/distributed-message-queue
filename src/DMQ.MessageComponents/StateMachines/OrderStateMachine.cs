@@ -68,6 +68,7 @@ namespace DMQ.MessageComponents.StateMachines
 
                     }),
                 When(OrderAccepted)
+                    // custom activity
                     .Activity(x => x.OfType<AcceptOrderActivity>())
                     .TransitionTo(Accepted)
             );
