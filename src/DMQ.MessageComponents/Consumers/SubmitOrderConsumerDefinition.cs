@@ -20,7 +20,7 @@ namespace DMQ.MessageComponents.Consumers
         protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<SubmitOrderConsumer> consumerConfigurator)
         {
             // Add custom configuration to the pipeline middleware
-            endpointConfigurator.UseMessageRetry(r => r.Intervals(3, 1000));
+            endpointConfigurator.UseMessageRetry(r => r.Interval(3, 1000));
 
         }
     }
