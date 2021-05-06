@@ -68,7 +68,7 @@ namespace DMQ.MessageComponents.StateMachines
 
                     }),
                 When(OrderAccepted)
-                    // custom activity
+                    // custom activity that should get triggered
                     .Activity(x => x.OfType<AcceptOrderActivity>())
                     .TransitionTo(Accepted)
             );

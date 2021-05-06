@@ -23,20 +23,24 @@ namespace DMQ.API.Controllers
         ///     Startup.cs/AddMassTransit() registers all the endpoints, and the consumers will resolve them.
         /// </summary>
         private readonly ISendEndpointProvider _sendEndpointProvider;
+        private readonly IPublishEndpoint _publishEndpoint;
 
         public OrderController(ILogger<OrderController> logger,
                                IRequestClient<ISubmitOrder> submitOrderRequestClient,
                                IRequestClient<ICheckOrder> checkOrderRequestClient,
-                               ISendEndpointProvider sendEndpointProvider)
+                               ISendEndpointProvider sendEndpointProvider,
+                               IPublishEndpoint publishEndpoint)
         {
             _logger = logger;
             _submitOrderRequestClient = submitOrderRequestClient;
             _checkOrderRequestClient = checkOrderRequestClient;
             _sendEndpointProvider = sendEndpointProvider;
+            _publishEndpoint = publishEndpoint;
         }
 
         // Database for the order state is owned by another micro-service, so the API can not just talks to the database directly.
         [HttpGet]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public async Task<IActionResult> GetOrderStatus(Guid id)
         {
             var (status, notFound) = await _checkOrderRequestClient.GetResponse<IOrderStatus, IOrderNotFound>(new
@@ -56,8 +60,7 @@ namespace DMQ.API.Controllers
 
         // Publish a message without specifying a queue.
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status202Accepted)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public async Task<IActionResult> Post(Guid id, string customerNumber)
         {
             // Tuple response from the consumer
@@ -78,8 +81,7 @@ namespace DMQ.API.Controllers
 
         // Send a message directly to a queue, kind of cheating.
         [HttpPut]
-        [ProducesResponseType(StatusCodes.Status202Accepted)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public async Task<IActionResult> Put(Guid id, string customerNumber)
         {
             // Get the queue endpoint and send message to it.
@@ -89,6 +91,18 @@ namespace DMQ.API.Controllers
                 OrderId = id,
                 Timestamp = InVar.Timestamp,
                 CustomerNumber = customerNumber
+            });
+
+            return Accepted();
+        }
+
+        [HttpPatch]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Update))]
+        public async Task<IActionResult> Patch(Guid id)
+        {
+            await _publishEndpoint.Publish<IOrderAccepted>(new
+            {
+                OrderId = id
             });
 
             return Accepted();
