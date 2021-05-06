@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DMQ.MessageContracts\DMQ.MessageContracts.csproj" />
+    <ProjectReference Include="..\Warehouse.MessageContracts\Warehouse.MessageContracts.csproj" />
   </ItemGroup>
 
 </Project>
