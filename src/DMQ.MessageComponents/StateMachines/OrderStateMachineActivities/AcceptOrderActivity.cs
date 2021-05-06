@@ -1,6 +1,7 @@
 ﻿using Automatonymous;
 using DMQ.MessageContracts;
 using GreenPipes;
+using MassTransit;
 using System;
 using System.Threading.Tasks;
 
@@ -9,6 +10,7 @@ namespace DMQ.MessageComponents.StateMachines.OrderStateMachineActivities
     /// <summary>
     ///     Activity to run on order accepted event.
     ///     Custom activity allows us to inject dependancies like database context here, instead of putting dependancies on the state machine. The state machine should have no dependancy, otherwise it becomes hard to unit test, particularly when where are scoped dependancies.
+    ///     Note: state machine activity is different from routing slip activity.
     /// </summary>
     public class AcceptOrderActivity : Activity<OrderState, IOrderAccepted>
     {
@@ -19,8 +21,17 @@ namespace DMQ.MessageComponents.StateMachines.OrderStateMachineActivities
 
         public async Task Execute(BehaviorContext<OrderState, IOrderAccepted> context, Behavior<OrderState, IOrderAccepted> next)
         {
-            // Do anything you want
+            // business logic that should run as an activity 
             Console.WriteLine($"Execute for order id = {context.Data.OrderId}");
+
+            // Trigger courier routing slip activity
+            var consumeContext = context.GetPayload<ConsumeContext>();
+            var sendEndpoint = await consumeContext.GetSendEndpoint(new Uri("queue:fulfill-order"));
+            await sendEndpoint.Send<IFulfillOrder>(new
+            {
+                OrderId = context.Data.OrderId
+            });
+
             // Call next in the pipeline
             await next.Execute(context).ConfigureAwait(false);
         }
