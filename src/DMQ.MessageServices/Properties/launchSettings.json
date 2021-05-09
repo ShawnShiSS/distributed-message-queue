@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DMQ.MessageServices": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
