@@ -93,8 +93,8 @@ namespace DMQ.API.Controllers
             return BadRequest(await rejected);
         }
 
-        /*
-        // Send a message directly to a queue, kind of cheating.
+        
+        // Demo how to send a message directly to a queue, kind of cheating.
         [HttpPut("{id}")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public async Task<IActionResult> Put(Guid id, string customerNumber)
@@ -110,7 +110,7 @@ namespace DMQ.API.Controllers
 
             return Accepted();
         }
-        */
+        
 
         // PUT: api/Order/{id}/Acceptance
         /// <summary>
