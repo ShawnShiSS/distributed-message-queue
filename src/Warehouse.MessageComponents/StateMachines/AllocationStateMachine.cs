@@ -26,7 +26,8 @@ namespace Warehouse.MessageComponents.StateMachines
             Initially(
                 When(AllocationCreated)
                     // after allocation is created, let's schedule another event, which will be sent to queue "quartz"
-                    // events in the "quartz" queue will be consumed by a separate scheduler hosted service.
+                    // Events in the "quartz" queue will be consumed by a scheduler, which is a separate hosted service. The scheduler will persist the scheduled events in a database like SQL Server.
+                    // Note: the scheduler hosted service is NOT part of the solution (yet).
                     .Schedule(HoldExpiration, 
                               context => context.Init<IAllocationHoldDurationExpired>(new { context.Data.AllocationId}), 
                               context => context.Data.HoldDuration)
