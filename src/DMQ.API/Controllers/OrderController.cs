@@ -39,7 +39,13 @@ namespace DMQ.API.Controllers
         }
 
         // Database for the order state is owned by another micro-service, so the API can not just talks to the database directly.
-        [HttpGet]
+        // GET: api/Order/5
+        /// <summary>
+        ///     Get order status
+        /// </summary>
+        /// <param name="id">Order id</param>
+        /// <returns></returns>
+        [HttpGet("{id}", Name = "GetOrderStatus")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public async Task<IActionResult> GetOrderStatus(Guid id)
         {
@@ -59,9 +65,17 @@ namespace DMQ.API.Controllers
         }
 
         // Publish a message without specifying a queue.
+        // Post: api/Order
+        /// <summary>
+        ///     Create a new order
+        /// </summary>
+        /// <param name="id">Order Id</param>
+        /// <param name="customerNumber"></param>
+        /// <returns></returns>
         [HttpPost]
-        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
-        public async Task<IActionResult> Post(Guid id, string customerNumber)
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Create))]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        public async Task<IActionResult> Create(Guid id, string customerNumber)
         {
             // Tuple response from the consumer
             var (accepted, rejected) = await _submitOrderRequestClient.GetResponse<IOrderSubmissionAccepted, IOrderSubmissionRejected>(new
@@ -79,8 +93,9 @@ namespace DMQ.API.Controllers
             return BadRequest(await rejected);
         }
 
+        /*
         // Send a message directly to a queue, kind of cheating.
-        [HttpPut]
+        [HttpPut("{id}")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public async Task<IActionResult> Put(Guid id, string customerNumber)
         {
@@ -95,10 +110,18 @@ namespace DMQ.API.Controllers
 
             return Accepted();
         }
+        */
 
-        [HttpPatch]
+        // PUT: api/Order/{id}/Acceptance
+        /// <summary>
+        ///     Accept an order
+        /// </summary>
+        /// <param name="id">Order id.</param>
+        /// <returns></returns>
+        [HttpPut("{id}/Acceptance", Name ="AcceptOrder")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Update))]
-        public async Task<IActionResult> Patch(Guid id)
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        public async Task<IActionResult> AcceptOrder(Guid id)
         {
             await _publishEndpoint.Publish<IOrderAccepted>(new
             {
