@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Warehouse.MessageComponents;
+using Warehouse.MessageComponents.Consumers;
+using Warehouse.MessageComponents.StateMachines;
 using Warehouse.MessageContracts;
 
 namespace Warehouse.MessageServices
@@ -47,6 +49,16 @@ namespace Warehouse.MessageServices
                         // Add RabbitMQ as the message broker
                         cfg.UsingRabbitMq(ConfigureBus);
 
+
+                        // Add Saga and its repository
+                        const string mongoConfigurationString = "mongodb://127.0.0.1";
+                        cfg.AddSagaStateMachine<AllocationStateMachine, AllocationState>()
+                            .MongoDbRepository(r => 
+                            {
+                                r.Connection = mongoConfigurationString;
+                                r.DatabaseName = "allocations";
+                            });
+
                     });
 
                     // This will also configure the message queue endpoints.
@@ -70,9 +82,12 @@ namespace Warehouse.MessageServices
             }
         }
 
-        static void ConfigureBus(IBusRegistrationContext context, IRabbitMqBusFactoryConfigurator configurator)
+        static void ConfigureBus(IBusRegistrationContext busRegistrationContext, IRabbitMqBusFactoryConfigurator configurator)
         {
-            configurator.ConfigureEndpoints(context);
+            // Tell the bus to use the quartz message scheduler
+            configurator.UseMessageScheduler(new System.Uri("queue:quartz"));
+
+            configurator.ConfigureEndpoints(busRegistrationContext);
         }
     }
 }
