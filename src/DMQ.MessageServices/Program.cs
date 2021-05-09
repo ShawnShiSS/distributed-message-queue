@@ -5,11 +5,15 @@ using DMQ.MessageComponents.StateMachines.OrderStateMachineActivities;
 using MassTransit;
 using MassTransit.Definition;
 using MassTransit.RabbitMqTransport;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DependencyCollector;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Warehouse.MessageContracts;
@@ -22,6 +26,15 @@ namespace DMQ.MessageServices
     /// </summary>
     class Program
     {
+        /// <summary>
+        ///     Application Insight module.
+        /// </summary>
+        static DependencyTrackingTelemetryModule _module;
+        /// <summary>
+        ///     Application Insight telemetry client.
+        /// </summary>
+        static TelemetryClient _telemetryClient;
+
         static async Task Main(string[] args)
         {
             var isService = !(Debugger.IsAttached);
@@ -39,6 +52,15 @@ namespace DMQ.MessageServices
                 })
                 .ConfigureServices((hostingContext, services) => 
                 {
+                    // Configure application insight 
+                    _module = new DependencyTrackingTelemetryModule();
+                    _module.IncludeDiagnosticSourceActivities.Add("MassTransit");
+                    TelemetryConfiguration telemetryConfiguration = TelemetryConfiguration.CreateDefault();
+                    telemetryConfiguration.InstrumentationKey = "Your_InstrumentationKey_From_AzurePortal";
+                    telemetryConfiguration.TelemetryInitializers.Add(new HttpDependenciesParsingTelemetryInitializer());
+                    _telemetryClient = new TelemetryClient(telemetryConfiguration);
+                    _module.Initialize(telemetryConfiguration);
+
                     // Use snake-like-names for queues.
                     // E.g., queue for SubmitOrder messages would be named "submit-order"
                     services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
@@ -97,6 +119,10 @@ namespace DMQ.MessageServices
             {
                 await builder.RunConsoleAsync();
             }
+
+            // Application insight clean up
+            _telemetryClient?.Flush();
+            _module?.Dispose();
         }
 
         static void ConfigureBus(IBusRegistrationContext context, IRabbitMqBusFactoryConfigurator configurator)

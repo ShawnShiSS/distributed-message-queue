@@ -19,3 +19,7 @@ RabbitMQ will handle the load balancing and distribute messages to connected ser
 # Message timeout
 1. Command type messages that create/update orders should not timeout, since they contain sensitive information.
 1. Query type messages that retrieve order state can timeout, since it won't hurt...
+
+# Application Insights
+1. Mass Transit internally uses Microsoft Diagnostic Source library for telemetry data, such as events, sagas, consumers, handlers. These telemetry events create activities using Diagnositc Source and are chained together through a series of activity ids in the message header and are sent to Application Insight.
+
