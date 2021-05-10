@@ -75,14 +75,14 @@ namespace DMQ.API.Controllers
         [HttpPost]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Create))]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
-        public async Task<IActionResult> Create(Guid id, string customerNumber)
+        public async Task<IActionResult> Create([FromBody] DMQ.API.Models.Order.Create createCommand)
         {
             // Tuple response from the consumer
             var (accepted, rejected) = await _submitOrderRequestClient.GetResponse<IOrderSubmissionAccepted, IOrderSubmissionRejected>(new
             {
-                OrderId = id,
+                OrderId = createCommand.OrderId,
                 Timestamp = InVar.Timestamp,
-                CustomerNumber = customerNumber
+                CustomerNumber = createCommand.CustomerNumber
             });
 
             if (accepted.IsCompletedSuccessfully)
