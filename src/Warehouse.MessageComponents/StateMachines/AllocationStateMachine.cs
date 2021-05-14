@@ -11,6 +11,7 @@ namespace Warehouse.MessageComponents.StateMachines
         public AllocationStateMachine()
         {
             Event(() => AllocationCreated, x => x.CorrelateById(m => m.Message.AllocationId));
+            Event(() => AllocationReleaseRequested, x => x.CorrelateById(m => m.Message.AllocationId));
 
             // After scheduling, a token is returned and the token can be used to cancel a scheduled event.
             Schedule(() => HoldExpiration, x => x.HoldDurationToken, s => 
@@ -31,14 +32,35 @@ namespace Warehouse.MessageComponents.StateMachines
                     .Schedule(HoldExpiration, 
                               context => context.Init<IAllocationHoldDurationExpired>(new { context.Data.AllocationId}), 
                               context => context.Data.HoldDuration)
-                    .TransitionTo(Allocated)
+                    .TransitionTo(Allocated),
+                // In case the release request gets in before the allocation is created
+                When(AllocationReleaseRequested)
+                    .TransitionTo(Released)
+            );
+
+            During(Released,
+                When(AllocationCreated)
+                    .ThenAsync(context => Console.Out.WriteLineAsync($"Allocation was already released: {context.Instance.CorrelationId}"))
+                    .Finalize()
             );
 
             During(Allocated,
                 When(HoldExpiration.Received)
+                    .ThenAsync(context => Console.Out.WriteLineAsync($"Allocation expired and is released: {context.Instance.CorrelationId}"))
                     //.TransitionTo(Released)
                     // instead of releasing it and keeping a log, let's just finalize the state machine instance
-                    .Finalize()
+                    .Finalize(),
+                When(AllocationReleaseRequested)
+                    .ThenAsync(context => Console.Out.WriteLineAsync($"Allocation release request, granted: {context.Instance.CorrelationId}"))
+                    //.TransitionTo(Released)
+                    // instead of releasing it and keeping a log, let's just finalize the state machine instance
+                    .Finalize(),
+                // In case RabbitMQ connection dropped after allocation is created by before the scheduler finishes.
+                When(AllocationCreated)
+                    .Schedule(HoldExpiration,
+                              context => context.Init<IAllocationHoldDurationExpired>(new { context.Data.AllocationId }),
+                              context => context.Data.HoldDuration)
+                    .TransitionTo(Allocated)
             );
 
             // Tell saga to delete this instance when the instance is finalized.
@@ -52,5 +74,6 @@ namespace Warehouse.MessageComponents.StateMachines
         public State Released { get; set; }
 
         public Event<IAllocationCreated> AllocationCreated { get; set; }
+        public Event<IAllocationReleaseRequested> AllocationReleaseRequested { get; set; }
     }
 }
