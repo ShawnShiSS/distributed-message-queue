@@ -17,7 +17,8 @@ namespace DMQ.MessageComponents.Consumers
 
             // For each endpoint hosting an activity,
             // two queues are required to execute one activity
-            // One for execution, one for compensate
+            // One for execution, one for compensate.
+            // By convention, AllocateInventory will have a queue name of kebab-case: allocate-inventory_execute
             builder.AddActivity("AllocateInventory", 
                                 new Uri("queue:allocate-inventory_execute"),
                                 new 
@@ -25,7 +26,16 @@ namespace DMQ.MessageComponents.Consumers
                                     ItemNumber = "ITEM123",
                                     Quantity = 10.0m
                                 });
-            // All activities can use an variable, so that we do not repeating it multiple times in the arguments above throughout the routing
+
+            builder.AddActivity("PaymentActivity",
+                                new Uri("queue:payment_execute"),
+                                new 
+                                {
+                                    CardNumber = "4000", // Fake card number for now
+                                    Amount = 99.99m
+                                });
+
+            // All activities can access an variable, so that we do not repeating it multiple times in the arguments above throughout the routing
             builder.AddVariable("OrderId", context.Message.OrderId);
 
             // Create the routing slip
