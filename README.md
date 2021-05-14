@@ -2,7 +2,7 @@
 A distributed message queue system that handle messages asynchronously.
 
 ## System Diagram
-<img src="https://github.com/ShawnShiSS/distributed-message-queue/blob/main/Solution%20Items/SystemDiagram.jpg" width="100%">
+<img src="https://github.com/ShawnShiSS/distributed-message-queue/blob/main/Solution%20Items/System_Diagram.jpg" width="100%">
 
 ## Projects
 * DMQ.API
