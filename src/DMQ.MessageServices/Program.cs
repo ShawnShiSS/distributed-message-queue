@@ -127,6 +127,7 @@ namespace DMQ.MessageServices
 
         static void ConfigureBus(IBusRegistrationContext context, IRabbitMqBusFactoryConfigurator configurator)
         {
+            // Auto configure endpoints 
             configurator.ConfigureEndpoints(context);
         }
     }
