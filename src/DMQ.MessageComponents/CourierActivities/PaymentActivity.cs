@@ -16,13 +16,14 @@ namespace DMQ.MessageComponents.CourierActivities
                 throw new ArgumentNullException(nameof(cardNumber));
             }
 
+            // Process payment
+            // Fake delay, allowing the allocation to get into allocated state and take hold in the other Saga (See AllocateInventoryConsumer.cs).
+            await Task.Delay(2000);
+
             if (cardNumber.StartsWith("5999"))
             {
                 throw new InvalidCastException("Card number is not valid");
             }
-
-            // Process payment
-            await Task.Delay(300);
 
             return context.Completed(new { AuthorizedCode = "88888" });
         }
