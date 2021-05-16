@@ -52,7 +52,7 @@ namespace Warehouse.MessageServices
 
                         // Add Saga and its repository
                         const string mongoConfigurationString = "mongodb://127.0.0.1";
-                        cfg.AddSagaStateMachine<AllocationStateMachine, AllocationState>()
+                        cfg.AddSagaStateMachine<AllocationStateMachine, AllocationState>(typeof(AllocationStateMachineDefinition))
                             .MongoDbRepository(r => 
                             {
                                 r.Connection = mongoConfigurationString;
