@@ -17,7 +17,7 @@ namespace Warehouse.MessageComponents.Consumers
             {
                 AllocationId = context.Message.AllocationId,
                 // Time span in miliseconds
-                HoldDuration = 6000
+                HoldDuration = 15000
             });
 
             // Return response.
