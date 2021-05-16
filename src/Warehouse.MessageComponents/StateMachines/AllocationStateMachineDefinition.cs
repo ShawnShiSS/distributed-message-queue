@@ -22,7 +22,7 @@ namespace Warehouse.MessageComponents.StateMachines
 
         protected override void ConfigureSaga(IReceiveEndpointConfigurator endpointConfigurator, ISagaConfigurator<AllocationState> sagaConfigurator)
         {
-            // In order to deal with concurrency, i.e. two concurrent requests trying to create a saga, we want one to fail to retry after the other one has created the saga.
+            // In order to deal with concurrency, i.e. two concurrent requests trying to create a saga and producing duplicated key error, we want one to fail to retry after the other one has created the saga.
             // Retry an errored message by sending it back to the pipeline, which will reload the saga.
             // Retrying is done in-memory and keeps the message lock on the message broker, so do not retry too many times, otherwise the locked messages will block your message consumptions.
             endpointConfigurator.UseMessageRetry(r => r.Interval(3, 1000));

@@ -14,7 +14,7 @@ namespace Warehouse.MessageComponents.StateMachines
             Event(() => AllocationReleaseRequested, x => x.CorrelateById(m => m.Message.AllocationId));
 
             // After scheduling, a token is returned and the token can be used to cancel a scheduled event.
-            Schedule(() => HoldExpiration, x => x.HoldDurationToken, s => 
+            Schedule(() => ScheduledHoldExpiration, x => x.HoldDurationToken, s => 
             {
                 s.Delay = TimeSpan.FromHours(2);
                 // Allocation id is used to correlate back to the state machine
@@ -29,7 +29,7 @@ namespace Warehouse.MessageComponents.StateMachines
                     // after allocation is created, let's schedule another event, which will be sent to queue "quartz"
                     // Events in the "quartz" queue will be consumed by a scheduler, which is a separate hosted service. The scheduler will persist the scheduled events in a database like SQL Server.
                     // Note: the scheduler hosted service is NOT part of the solution (yet).
-                    .Schedule(HoldExpiration, 
+                    .Schedule(ScheduledHoldExpiration, 
                               context => context.Init<IAllocationHoldDurationExpired>(new { context.Data.AllocationId}), 
                               context => context.Data.HoldDuration)
                     .TransitionTo(Allocated),
@@ -45,19 +45,20 @@ namespace Warehouse.MessageComponents.StateMachines
             );
 
             During(Allocated,
-                When(HoldExpiration.Received)
+                When(ScheduledHoldExpiration.Received)
                     .ThenAsync(context => Console.Out.WriteLineAsync($"Allocation expired and is released: {context.Instance.CorrelationId}"))
                     //.TransitionTo(Released)
                     // instead of releasing it and keeping a log, let's just finalize the state machine instance
                     .Finalize(),
                 When(AllocationReleaseRequested)
+                    .Unschedule(ScheduledHoldExpiration)
                     .ThenAsync(context => Console.Out.WriteLineAsync($"Allocation release request, granted: {context.Instance.CorrelationId}"))
                     //.TransitionTo(Released)
                     // instead of releasing it and keeping a log, let's just finalize the state machine instance
                     .Finalize(),
                 // In case RabbitMQ connection dropped after allocation is created by before the scheduler finishes.
                 When(AllocationCreated)
-                    .Schedule(HoldExpiration,
+                    .Schedule(ScheduledHoldExpiration,
                               context => context.Init<IAllocationHoldDurationExpired>(new { context.Data.AllocationId }),
                               context => context.Data.HoldDuration)
                     .TransitionTo(Allocated)
@@ -67,7 +68,7 @@ namespace Warehouse.MessageComponents.StateMachines
             SetCompletedWhenFinalized();
         }
 
-        public Schedule<AllocationState, IAllocationHoldDurationExpired> HoldExpiration { get; set; }
+        public Schedule<AllocationState, IAllocationHoldDurationExpired> ScheduledHoldExpiration { get; set; }
 
 
         public State Allocated { get; set; }
