@@ -9,4 +9,5 @@ namespace DMQ.MessageComponents.CourierActivities
         decimal Quantity { get; }
 
     }
+
 }
