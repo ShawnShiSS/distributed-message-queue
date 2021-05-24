@@ -34,6 +34,8 @@ namespace DMQ.MessageComponents.StateMachines
         /// </summary>
         public DateTime? SubmittedDate { get; set; }
 
+        public string FaultReason { get; set; }
+
         /// <summary>
         ///     Updated timestamp
         /// </summary>

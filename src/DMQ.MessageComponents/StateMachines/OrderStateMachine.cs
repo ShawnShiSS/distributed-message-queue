@@ -15,8 +15,9 @@ namespace DMQ.MessageComponents.StateMachines
             // If Redis is used as the state machine repository, redis-cli allows us to check an order state by "get orderId"
             Event(() => OrderSubmitted, x => x.CorrelateById(m => m.Message.OrderId));
             Event(() => OrderAccepted, x => x.CorrelateById(m => m.Message.OrderId));
+            Event(() => FulfillmentFaulted, x => x.CorrelateById(m => m.Message.OrderId));
 
-            Event(() => CheckOrderStatus, x =>
+            Event(() => CheckOrderStatusRequested, x =>
             {
                 x.CorrelateById(m => m.Message.OrderId);
                 // If state instance does not exist for the order id, we need to return not found.
@@ -57,6 +58,11 @@ namespace DMQ.MessageComponents.StateMachines
                     .TransitionTo(Submitted)
             );
 
+            During(Accepted,
+                When(FulfillmentFaulted)
+                    .TransitionTo(Faulted)
+            );
+
             // Messages are not guaranteed to be processed in order, so we need to handle out-of-order messages.
             // DuringAny includes all states other than initial state and final state.
             DuringAny(
@@ -75,7 +81,7 @@ namespace DMQ.MessageComponents.StateMachines
 
             // Handle check order status requests.
             DuringAny(
-                When(CheckOrderStatus)
+                When(CheckOrderStatusRequested)
                     .RespondAsync(x => x.Init<IOrderStatus>(new
                     {
                         OrderId = x.Instance.CorrelationId,
@@ -110,6 +116,11 @@ namespace DMQ.MessageComponents.StateMachines
         public State Canceled { get; private set; }
 
         /// <summary>
+        ///     Faulted state.
+        /// </summary>
+        public State Faulted { get; private set; }
+
+        /// <summary>
         ///     On order submitted event.
         /// </summary>
         public Event<IOrderSubmitted> OrderSubmitted { get; private set; }
@@ -122,7 +133,9 @@ namespace DMQ.MessageComponents.StateMachines
         /// <summary>
         ///     On check order status event.
         /// </summary>
-        public Event<ICheckOrder> CheckOrderStatus { get; private set; }
+        public Event<ICheckOrder> CheckOrderStatusRequested { get; private set; }
+
+        public Event<IOrderFulfillmentFaulted> FulfillmentFaulted { get; private set; }
 
         /// <summary>
         ///     On account closed event, we may want to do things like cancel an order.
