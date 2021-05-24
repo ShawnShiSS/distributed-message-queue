@@ -1,6 +1,7 @@
 ﻿using DMQ.MessageContracts;
 using MassTransit;
 using MassTransit.Courier;
+using MassTransit.Courier.Contracts;
 using System;
 using System.Threading.Tasks;
 
@@ -37,6 +38,11 @@ namespace DMQ.MessageComponents.Consumers
 
             // All activities can access an variable, so that we do not repeating it multiple times in the arguments above throughout the routing
             builder.AddVariable("OrderId", context.Message.OrderId);
+
+            // Using source address since we know where the caller is from
+            await builder.AddSubscription(context.SourceAddress, RoutingSlipEvents.Faulted | RoutingSlipEvents.Supplemental, RoutingSlipEventContents.None, x => x.Send<IOrderFulfillmentFaulted>(new { context.Message.OrderId}));
+
+            await builder.AddSubscription(context.SourceAddress, RoutingSlipEvents.Completed| RoutingSlipEvents.Supplemental, RoutingSlipEventContents.None, x => x.Send<IOrderFulfillmentCompleted>(new { context.Message.OrderId }));
 
             // Create the routing slip
             var routingSlip = builder.Build();
