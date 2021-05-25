@@ -82,7 +82,8 @@ namespace DMQ.API.Controllers
             {
                 OrderId = createCommand.OrderId,
                 Timestamp = InVar.Timestamp,
-                CustomerNumber = createCommand.CustomerNumber
+                CustomerNumber = createCommand.CustomerNumber,
+                PaymentCardNumber = createCommand.PaymentCardNumber
             });
 
             if (accepted.IsCompletedSuccessfully)

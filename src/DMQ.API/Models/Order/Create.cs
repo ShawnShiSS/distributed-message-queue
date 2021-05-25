@@ -9,5 +9,6 @@ namespace DMQ.API.Models.Order
     {
         public Guid OrderId { get; set; }
         public string CustomerNumber { get; set; }
+        public string PaymentCardNumber { get; set; }
     }
 }
