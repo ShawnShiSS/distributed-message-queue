@@ -11,5 +11,11 @@ namespace DMQ.MessageContracts
         Guid OrderId { get; }
         DateTime Timestamp { get; }
         string CustomerNumber { get; }
+
+        /// <summary>
+        ///     Payment card number.
+        ///     In real world, instead of storing card numbers in messages, a fulfill order consumer can just use a reference or a token to request the payment information as a routing slip acitivity, from a PCI vault in order to be PCI compliant.
+        /// </summary>
+        string PaymentCardNumber { get; }
     }
 }
