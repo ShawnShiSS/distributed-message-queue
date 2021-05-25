@@ -17,5 +17,6 @@ namespace DMQ.MessageContracts
         ///     Business identifier Customer Number
         /// </summary>
         string CustomerNumber { get; }
+        string PaymentCardNumber { get; }
     }
 }
