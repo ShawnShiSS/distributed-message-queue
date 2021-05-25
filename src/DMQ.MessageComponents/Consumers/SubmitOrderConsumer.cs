@@ -30,10 +30,10 @@ namespace DMQ.MessageComponents.Consumers
             // Got the submit order message, let's acknowledge it by publishing an event.
             await context.Publish<IOrderSubmitted>(new
             {
-
                 OrderId = context.Message.OrderId,
                 Timestamp = InVar.Timestamp,
-                CustomerNumber = context.Message.CustomerNumber
+                CustomerNumber = context.Message.CustomerNumber,
+                PaymentCardNumber = context.Message.PaymentCardNumber
             });
 
             // Only respond if a response is expected
