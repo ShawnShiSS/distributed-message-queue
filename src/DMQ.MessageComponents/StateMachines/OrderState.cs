@@ -8,6 +8,7 @@ namespace DMQ.MessageComponents.StateMachines
         SagaStateMachineInstance,
         ISagaVersion 
     {
+
         /// <summary>
         ///     Unique identifier to identify the saga instance.
         /// </summary>
@@ -28,6 +29,12 @@ namespace DMQ.MessageComponents.StateMachines
         ///     Customer number.
         /// </summary>
         public string CustomerNumber { get; set; }
+
+        /// <summary>
+        ///     Payment card number.
+        /// </summary>
+        public string PaymentCardNumber;
+
 
         /// <summary>
         ///     Order submitted date.

@@ -29,7 +29,9 @@ namespace DMQ.MessageComponents.StateMachines.OrderStateMachineActivities
             var sendEndpoint = await consumeContext.GetSendEndpoint(new Uri("queue:fulfill-order"));
             await sendEndpoint.Send<IFulfillOrder>(new
             {
-                OrderId = context.Data.OrderId
+                OrderId = context.Data.OrderId,
+                CustomerNumber = context.Instance.CustomerNumber,
+                PaymentCardNumber = context.Instance.PaymentCardNumber
             });
 
             // Call next in the pipeline

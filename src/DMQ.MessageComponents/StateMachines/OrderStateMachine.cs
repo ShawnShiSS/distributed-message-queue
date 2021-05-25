@@ -51,6 +51,7 @@ namespace DMQ.MessageComponents.StateMachines
                     .Then(context => 
                     {
                         context.Instance.CustomerNumber = context.Data.CustomerNumber;
+                        context.Instance.PaymentCardNumber = context.Data.PaymentCardNumber;
                         context.Instance.Updated = DateTime.UtcNow;
                         context.Instance.SubmittedDate = context.Data.Timestamp;
 
