@@ -32,7 +32,7 @@ namespace DMQ.MessageComponents.Consumers
                                 new Uri("queue:payment_execute"),
                                 new 
                                 {
-                                    CardNumber = "4000", // Fake card number for now
+                                    CardNumber = context.Message.PaymentCardNumber ?? "5999", // Fake card number will fail to represent an existing behaviour, so we don't have to cold start all systems at the same time.
                                     Amount = 99.99m
                                 });
 
