@@ -1,8 +1,10 @@
-﻿using DMQ.MessageComponents.Consumers;
+﻿using DMQ.MessageComponents.BatchConsumers;
+using DMQ.MessageComponents.Consumers;
 using DMQ.MessageComponents.CourierActivities;
 using DMQ.MessageComponents.StateMachines;
 using DMQ.MessageComponents.StateMachines.OrderStateMachineActivities;
 using MassTransit;
+using MassTransit.Courier.Contracts;
 using MassTransit.Definition;
 using MassTransit.RabbitMqTransport;
 using Microsoft.ApplicationInsights;
@@ -74,6 +76,9 @@ namespace DMQ.MessageServices
                     // Use snake-like-names for queues.
                     // E.g., queue for SubmitOrder messages would be named "submit-order"
                     services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
+
+                    // Batch consumers do not get discovered by namespace.
+                    services.AddScoped<RoutingSlipBatchEventConsumer>();
                     services.AddMassTransit(cfg => 
                     {
                         // Allow Mass Transit to scan all the types instead of manually adding them all
@@ -140,6 +145,24 @@ namespace DMQ.MessageServices
 
         static void ConfigureBus(IBusRegistrationContext context, IRabbitMqBusFactoryConfigurator configurator)
         {
+            // Batch endpoints need to be handled manually
+            configurator.ReceiveEndpoint(KebabCaseEndpointNameFormatter.Instance.Consumer<RoutingSlipBatchEventConsumer>(), e =>
+            {
+                // Make sure we prefetch more than the message limit for batching.
+                e.PrefetchCount = 16;
+
+                e.Batch<RoutingSlipCompleted>(b => 
+                {
+                    // Time limit to wait
+                    b.TimeLimit = TimeSpan.FromSeconds(5);
+
+                    // Max number of messages to wait
+                    b.MessageLimit = 10;
+
+                    b.Consumer<RoutingSlipBatchEventConsumer, RoutingSlipCompleted>(context);
+                });
+            });
+
             // Auto configure endpoints 
             configurator.ConfigureEndpoints(context);
         }

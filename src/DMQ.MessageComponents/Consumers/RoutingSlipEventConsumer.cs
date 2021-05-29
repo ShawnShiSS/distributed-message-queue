@@ -13,7 +13,8 @@ namespace DMQ.MessageComponents.Consumers
     ///     A catch-all listener to the routing slip events.
     /// </summary>
     public class RoutingSlipEventConsumer :
-        IConsumer<RoutingSlipCompleted>,
+        // This is now batched up and consumed by RoutingSlipBatchEventConsumer.
+        //IConsumer<RoutingSlipCompleted>,
         IConsumer<RoutingSlipActivityCompleted>,
         IConsumer<RoutingSlipFaulted>
     {
@@ -24,16 +25,18 @@ namespace DMQ.MessageComponents.Consumers
             _logger = logger;
         }
 
-        public Task Consume(ConsumeContext<RoutingSlipCompleted> context)
-        {
-            if (_logger.IsEnabled(LogLevel.Information))
-            {
-                _logger.Log(LogLevel.Information, "Routing Slip Completed: {TrackingNumber}", context.Message.TrackingNumber);
-            }
+        // This is now batched up and consumed by RoutingSlipBatchEventConsumer.
+        // Note if there are no consumers for a message type, those messages would be sent to a skipped queue.
+        //public Task Consume(ConsumeContext<RoutingSlipCompleted> context)
+        //{
+        //    if (_logger.IsEnabled(LogLevel.Information))
+        //    {
+        //        _logger.Log(LogLevel.Information, "Routing Slip Completed: {TrackingNumber}", context.Message.TrackingNumber);
+        //    }
 
-            // Not an async state machine.
-            return Task.CompletedTask;
-        }
+        //    // Not an async state machine.
+        //    return Task.CompletedTask;
+        //}
 
         public Task Consume(ConsumeContext<RoutingSlipActivityCompleted> context)
         {

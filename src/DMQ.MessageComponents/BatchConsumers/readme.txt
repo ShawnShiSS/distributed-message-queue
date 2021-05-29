@@ -1,0 +1,1 @@
+﻿This new directory is needed because batch consumers are not auto discovered and mapped, and we are auto-discovering consumers based on namespace, see Program.cs.
