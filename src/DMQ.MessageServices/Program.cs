@@ -53,6 +53,7 @@ namespace DMQ.MessageServices
                 .ConfigureServices((hostingContext, services) => 
                 {
                     // Configure application insight 
+                    // Note: "MT-Activity-id" in the message "headers" section is the diagnostic activity id for telemetry data so that App Insights can group the messages correctly.
                     _module = new DependencyTrackingTelemetryModule();
                     _module.IncludeDiagnosticSourceActivities.Add("MassTransit");
                     TelemetryConfiguration telemetryConfiguration = TelemetryConfiguration.CreateDefault();
