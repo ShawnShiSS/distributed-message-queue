@@ -13,6 +13,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -37,7 +39,16 @@ namespace DMQ.MessageServices
 
         static async Task Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .CreateLogger();
+
             var isService = !(Debugger.IsAttached);
+
+
 
             var builder = new HostBuilder()
                 .ConfigureAppConfiguration((hostingContext, config) => 
@@ -106,8 +117,9 @@ namespace DMQ.MessageServices
                 })
                 .ConfigureLogging((hostingContext, logging) => 
                 {
+                    logging.AddSerilog(dispose: true);
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                    logging.AddConsole();
+                    //logging.AddConsole();
                 });
             
             if (isService)
@@ -124,6 +136,8 @@ namespace DMQ.MessageServices
             // Application insight clean up
             _telemetryClient?.Flush();
             _module?.Dispose();
+
+            Log.CloseAndFlush();
         }
 
         static void ConfigureBus(IBusRegistrationContext context, IRabbitMqBusFactoryConfigurator configurator)
