@@ -48,8 +48,6 @@ namespace DMQ.MessageServices
 
             var isService = !(Debugger.IsAttached);
 
-
-
             var builder = new HostBuilder()
                 .ConfigureAppConfiguration((hostingContext, config) => 
                 {
