@@ -12,6 +12,21 @@ namespace DMQ.MessageComponents.Consumers
     {
         public async Task Consume(ConsumeContext<IFulfillOrder> context)
         {
+            // Fake unrecoverable exception and SKIP message retry
+            if (context.Message.CustomerNumber.StartsWith("INVALID"))
+            {
+                throw new InvalidOperationException("We tried, but the customer is invalid");
+            }
+
+            // Fake recoverable exception and test message retry
+            if (context.Message.CustomerNumber.StartsWith("MAYBE"))
+            {
+                if (100 > 30)
+                {
+                    throw new ApplicationException("We randomly failed...");
+                }
+            }
+
             // Build and execute the routing slip
             // Every routing slip has a tracking number, like a Fedex package
             var builder = new RoutingSlipBuilder(Guid.NewGuid());

@@ -3,6 +3,7 @@ using DMQ.MessageComponents.StateMachines.OrderStateMachineActivities;
 using DMQ.MessageContracts;
 using MassTransit;
 using System;
+using System.Linq;
 
 namespace DMQ.MessageComponents.StateMachines
 {
@@ -16,6 +17,8 @@ namespace DMQ.MessageComponents.StateMachines
             Event(() => OrderSubmitted, x => x.CorrelateById(m => m.Message.OrderId));
             Event(() => OrderAccepted, x => x.CorrelateById(m => m.Message.OrderId));
             Event(() => FulfillmentFaulted, x => x.CorrelateById(m => m.Message.OrderId));
+            Event(() => FulfillmentCompleted, x => x.CorrelateById(m => m.Message.OrderId));
+            Event(() => FulfillOrderFaulted, x => x.CorrelateById(m => m.Message.Message.OrderId));
 
             Event(() => CheckOrderStatusRequested, x =>
             {
@@ -60,8 +63,13 @@ namespace DMQ.MessageComponents.StateMachines
             );
 
             During(Accepted,
+                When(FulfillOrderFaulted)
+                    .Then(context => Console.WriteLine("Fulfill order faulted: {0}", context.Data.Exceptions.FirstOrDefault()?.Message))
+                    .TransitionTo(Faulted),
                 When(FulfillmentFaulted)
-                    .TransitionTo(Faulted)
+                    .TransitionTo(Faulted),
+                When(FulfillmentCompleted)
+                    .TransitionTo(Completed)
             );
 
             // Messages are not guaranteed to be processed in order, so we need to handle out-of-order messages.
@@ -121,6 +129,12 @@ namespace DMQ.MessageComponents.StateMachines
         /// </summary>
         public State Faulted { get; private set; }
 
+
+        /// <summary>
+        ///  Completed state
+        /// </summary>
+        public State Completed { get; private set; }
+
         /// <summary>
         ///     On order submitted event.
         /// </summary>
@@ -136,11 +150,24 @@ namespace DMQ.MessageComponents.StateMachines
         /// </summary>
         public Event<ICheckOrder> CheckOrderStatusRequested { get; private set; }
 
+        /// <summary>
+        ///     Completed event from the routing slip transaction being fully completed.
+        /// </summary>
+        public Event<IOrderFulfillmentCompleted> FulfillmentCompleted { get; private set; }
+
+        /// <summary>
+        ///     Faulted event from the routing slip not being able to fully complete in a transactional manner.
+        /// </summary>
         public Event<IOrderFulfillmentFaulted> FulfillmentFaulted { get; private set; }
 
         /// <summary>
         ///     On account closed event, we may want to do things like cancel an order.
         /// </summary>
         public Event<ICustomerAccountClosed> AccountClosed { get; private set; }
+
+        /// <summary>
+        ///     Fault message when error occurs in the fulfill order consumer.
+        /// </summary>
+        public Event<Fault<IFulfillOrder>> FulfillOrderFaulted { get; set; }
     }
 }

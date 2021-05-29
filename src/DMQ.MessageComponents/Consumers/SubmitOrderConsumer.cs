@@ -43,6 +43,8 @@ namespace DMQ.MessageComponents.Consumers
             }
 
             // Generate response
+            // Note this is business logic to reject an order,
+            // so we do not use message retry.
             if (!IsValidOrder(context.Message.CustomerNumber))
             {
                 await context.RespondAsync<IOrderSubmissionRejected>(new 

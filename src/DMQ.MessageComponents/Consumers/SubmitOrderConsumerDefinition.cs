@@ -20,6 +20,8 @@ namespace DMQ.MessageComponents.Consumers
         protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<SubmitOrderConsumer> consumerConfigurator)
         {
             // Add custom configuration to the pipeline middleware
+
+            // When exception occurs, retry 3 times before we move the message out of the queue and put it to the error queue.
             endpointConfigurator.UseMessageRetry(r => r.Interval(3, 1000));
 
         }
