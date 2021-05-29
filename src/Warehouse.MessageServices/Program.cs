@@ -49,6 +49,13 @@ namespace Warehouse.MessageServices
                         // Add RabbitMQ as the message broker
                         cfg.UsingRabbitMq(ConfigureBus);
 
+                        // Add Azure Service Bus as the message broker
+                        //cfg.UsingAzureServiceBus((busRegistrationContext, busFactoryConfigurator) =>
+                        //{
+                        //    // TODO: Connection string should go into appsettings.
+                        //    busFactoryConfigurator.Host("ServiceBusConnectionString");
+                        //});
+
 
                         // Add Saga and its repository
                         const string mongoConfigurationString = "mongodb://127.0.0.1";
